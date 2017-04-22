@@ -295,7 +295,8 @@ module SerieBot
              'DMs'
            else
              channel.server.name
-          end
+               end
+
       message = "Dumping messages from channel \"#{channel.name.gsub('`', '\\`')}\" in #{server.gsub('`', '\\`')}, please wait..."
       output_channel.send_message(message) unless output_channel.nil?
       puts message
@@ -311,15 +312,41 @@ module SerieBot
       output_file = File.open(output_filename, 'w')
       offset_id = channel.history(1, 1, 1)[0].id # get first message id
 
+      # # Now let's dump!
+      # loop do
+      #   hist_count_and_messages[0] = channel.history(100, nil, offset_id) # next 100
+      #   break if hist_count_and_messages[0] == []
+      #   hist_count_and_messages[1] = parse_history(hist_count_and_messages[0], hist_count_and_messages[1][0])
+      #   output_file.write((hist_count_and_messages[1][1].reverse.join("\n") + "\n").encode('UTF-8')) # write to file right away, don't store everything in memory
+      #   output_file.flush # make sure it gets written to the file
+      #   offset_id = hist_count_and_messages[0][0].id
+      # end
       # Now let's dump!
       loop do
-        hist_count_and_messages[0] = channel.history(100, nil, offset_id) # next 100
-        break if hist_count_and_messages[0] == []
-        hist_count_and_messages[1] = parse_history(hist_count_and_messages[0], hist_count_and_messages[1][0])
-        output_file.write((hist_count_and_messages[1][1].reverse.join("\n") + "\n").encode('UTF-8')) # write to file right away, don't store everything in memory
-        output_file.flush # make sure it gets written to the file
-        offset_id = hist_count_and_messages[0][0].id
+        # We can only go through 100 messages at a time, so grab 100.
+        # We need to reverse it because it goes reverse in what we're doing.
+        current_history = original_channel.history(100, nil, offset_id).reverse
+        # Break if there are no other messages
+        break if current_history == []
+
+        # Mirror announcement + save it
+        current_history.each do |message|
+          next if message.nil?
+          embed_to_send = create_embed(event.bot, message)
+          message_to_send = mirrored_channel.send_embed('', embed_to_send)
+
+          # Store message under original id
+          @messages[message.id] = {
+              embed_sent: embed_to_send,
+              message_sent: message_to_send.id
+          }
+        end
+
+        # Set offset ID to last message in history that we saw
+        # (this is the last message sent - 1 since Ruby has array offsets of 0)
+        offset_id = current_history[current_history.length - 1].id
       end
+
       output_file.close
       message = "#{hist_count_and_messages[1][0]} messages logged."
       output_channel.send_message(message) unless output_channel.nil?

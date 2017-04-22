@@ -21,7 +21,8 @@ module SerieBot
         Mod,
         Codes,
         Commands,
-        Userjoin
+        Userjoin,
+        Welcome
     ]
     # Set up bot
     if Config.appid == 0 || Config.appid.nil?
