@@ -15,11 +15,7 @@ module SerieBot
       if original_channel.nil? | mirrored_channel.nil?
         @original_channel = Helper.channel_from_name(event.bot.server(Config.root_server), 'announcements')
         # ID of mirror server
-        @mirrored_channel = if Config.debug
-                              Helper.channel_from_name(event.bot.server(Config.morpher_server), 'dev-test')
-                            else
-                              Helper.channel_from_name(event.bot.server(Config.morpher_server), 'announcements')
-                            end
+        @mirrored_channel = Config.debug ? Helper.channel_from_name(event.bot.server(Config.morpher_server), 'dev-test') : Helper.channel_from_name(event.bot.server(Config.morpher_server), 'announcements')
       end
     end
 

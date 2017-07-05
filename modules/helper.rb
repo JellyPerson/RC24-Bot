@@ -84,11 +84,7 @@ module SerieBot
         event.respond("Role \"#{full_name}\" set to default. Use `#{Config.prefix}config setrole #{role_type} <role name>` to change otherwise.")
       end
       # Check if the member has the ID of said role
-      user = if other_user.nil?
-               event.user
-             else
-               other_user
-             end
+      user = other_user.nil? ? event.user : other_user
       return user.role?(event.server.role(xxx_role_id))
     end
 
@@ -198,11 +194,7 @@ module SerieBot
       uri = URI.parse(url)
       filename = File.basename(uri.path)
 
-      filename = if filename.start_with?('a_')
-             filename.gsub('.jpg', '.gif')
-           else
-             filename.gsub('.jpg', '.png')
-           end
+      filename = filename.start_with?('a_') ? filename.gsub('.jpg', '.gif') : filename.gsub('.jpg', '.png')
       url << '?size=256'
       url = "https://cdn.discordapp.com/avatars/#{user.id}/#{filename}?size=#{size}"
       url
@@ -345,11 +337,7 @@ module SerieBot
         to_write = ''
         current_history.each do |message|
           next if message.nil?
-          author = if message.author.nil?
-                     'Unknown User'
-                   else
-                     message.author.distinct
-                   end
+          author = message.author.nil? ? 'Unknown User' : message.author.distinct
           time = message.timestamp
           content = message.content
 
