@@ -56,20 +56,14 @@ module SerieBot
         event.respond("❌ You don't have permission for that!")
         break
       end
-      if status == 'idle'
-        event.bot.idle
-        event.respond('✅ Status set to **Idle**!')
-      elsif status == 'dnd'
-        event.bot.dnd
-        event.respond('✅ Status set to **Do No Disturb**!')
-      elsif status == 'online'
-        event.bot.online
-        event.respond('✅ Status set to **Online**!')
-      elsif status == 'invisible' || status == 'offline'
-        event.bot.invisible
-        event.respond('✅ Status set to **Invisible**!')
-      else
-        event.respond('Enter a valid argument!')
+      case status.downcase
+        when 'idle' || 'away' || 'afk' then event.bot.idle
+        when 'dnd' then event.bot.dnd
+        when 'online' then event.bot.online
+        when 'invisible' || 'offline' then event.bot.invisible
+        else
+          event.respond('Enter a valid argument!')
+          next
       end
     end
 

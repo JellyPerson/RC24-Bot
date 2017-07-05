@@ -27,7 +27,7 @@ module SerieBot
         event.respond("❌ Sorry, but it looks like you're blocking DMs.")
         break
       end
-      event.respond('👌 I may or may not have just DMed you some wads.')
+      event.respond(' 👌 I may or may not have just DMed you some wads.')
     end
 
     command(:error, max_args: 1, min_args: 1) do |event, code|

@@ -253,7 +253,7 @@ module SerieBot
       lockdown.can_send_messages = true
       everyone_role = Helper.role_from_name(event.server, '@everyone')
       event.channel.define_overwrite(everyone_role, lockdown, 0)
-      event.respond('🔓**Channel has been unlocked.**🔓')
+      event.respond(' 🔓**Channel has been unlocked.**🔓')
     end
   end
 end
