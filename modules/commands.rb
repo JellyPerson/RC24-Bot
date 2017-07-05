@@ -38,9 +38,7 @@ module SerieBot
       unless local_match.nil?
         # match'd
         error_num = code.gsub(local_match[1], '')
-        if Config.debug
-          puts 'Code is ' + error_num
-        end
+        puts 'Code is ' + error_num if Config.debug
         error_text = @local_codes['news'][error_num.to_i]
         if error_text.nil? || error_text == ''
           event.respond('❌ Could not find the specified app error code.')
@@ -66,11 +64,7 @@ module SerieBot
         # Determine method
         # Per http://forum.wii-homebrew.com/index.php/Thread/57051-Wiimmfi-Error-API-has-an-error/?postID=680943#post680943
         # it was recommended to use "t=<code>" for dev and "e=<code>" for prod due to statistical reasons.
-        method = if Config.debug
-               "t=#{code}"
-             else
-               "e=#{code}"
-             end
+        method = Config.debug ? "t=#{code}" : "e=#{code}"
         # Grab JSON
         json_string = open("https://wiimmfi.de/error?#{method}&m=json").read
         array = JSON.parse(json_string, symbolize_names: true)
@@ -123,9 +117,7 @@ module SerieBot
 
           # Check if there are any local error notes.
           possible_note = @local_codes['notes'][code.to_i]
-          unless possible_note.nil? || possible_note == ''
-            message_to_send += "Note from RiiConnect24: #{possible_note}\n"
-          end
+          message_to_send += "Note from RiiConnect24: #{possible_note}\n" unless possible_note.nil? || possible_note == ''
 
           event.channel.send_embed do |e|
             e.title = "Here's information about your error:"

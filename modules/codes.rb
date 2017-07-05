@@ -102,8 +102,6 @@ module SerieBot
                     @codes[user.id] = {} if @codes[user.id].nil?
                 end
 
-
-
                 # Make sure they have friend codes, period.
                 if @codes[user.id].nil? || codes[user.id] == {}
                     event.respond("❌ **#{user_name}** has not added any friend codes!")
@@ -116,7 +114,7 @@ module SerieBot
                       '3ds'.to_sym => '<:New3DSXL:287651327763283968> **3DSs**:',
                       :nnid => '<:NintendoNetworkID:287655797104836608> **Nintendo Network IDs**:',
                       :switch => '<:Switch:287652338791874560> **Switches**:',
-                      :game => '🎮 **Games**:'
+                      :game => '  🎮 **Games**:'
                     }
 
                     badge_types = {
@@ -246,11 +244,7 @@ module SerieBot
                 event.respond("❌ You don't have permission for that!")
                 break
             end
-            user = begin
-                       event.bot.parse_mention(args[0])
-                   rescue
-                       event.user
-                   end
+            user = event.bot.parse_mention(args[0]) rescue event.user
             user = event.user if args[0].nil?
             Codes.codes[user.id] = nil
             puts "#{event.user.distinct} has wiped #{user.distinct}'s codes."

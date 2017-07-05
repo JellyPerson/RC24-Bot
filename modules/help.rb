@@ -46,9 +46,7 @@ module SerieBot
       end
       begin
         event.user.pm(help)
-        if Helper.has_role?(event,[:owner, :dev, :bot])
-          event.user.pm(extra_help)
-        end
+        event.user.pm(extra_help) if Helper.has_role?(event, [:owner, :dev, :bot])
         event.respond('Check your DMs!')
       rescue Discordrb::Errors::NoPermission
         event.respond("❌ Sorry, but it looks like you're blocking DMs.")

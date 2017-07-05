@@ -84,7 +84,7 @@ module SerieBot
           event.respond("❗❗❗ The bot doesn't have permission to kick!")
           break
         end
-        event.respond('👌 You have kicked the user, hard.')
+        event.respond(' 👌 You have kicked the user, hard.')
         break
       else
         event.respond('❌ Invalid argument. Please mention a valid user.')
@@ -117,7 +117,7 @@ module SerieBot
 				end
         # Register for logging
         Logging.record_action('warn', event.user, member, display)
-				event.respond('👌 Warned!')
+				event.respond(' 👌 Warned!')
 				break
 			else
 				event.respond('❌ Invalid argument. Please mention a valid user.')
@@ -156,7 +156,7 @@ module SerieBot
           event.server.ban(member)
           # Register for logging
           Logging.record_action('ban', event.user, member, ban_display)
-          event.respond('👌 The ban hammer has hit, hard.')
+          event.respond(' 👌 The ban hammer has hit, hard.')
         rescue
           event.respond("The bot doesn't have permission to ban that user!")
           break
@@ -207,7 +207,7 @@ module SerieBot
                   event.server.kick(member)
                   # Register for logging
                   Logging.record_action('kick', event.user, member, reason)
-                  event.respond('👌 The ban hammer has hit, hard.')
+                  event.respond(' 👌 The ban hammer has hit, hard.')
                 rescue
                   event.respond("The bot doesn't have permission to ban that user!")
                   break
@@ -230,7 +230,7 @@ module SerieBot
       everyone_role = Helper.role_from_name(event.server, '@everyone')
       event.channel.define_overwrite(everyone_role, 0, lockdown)
       if time.nil?
-        event.respond('🔒**This channel is now in lockdown. Only staff can send messages. **🔒')
+        event.respond(' 🔒**This channel is now in lockdown. Only staff can send messages. **🔒')
       elsif /\A\d+\z/.match(time)
         event.respond("🔒**This channel is now in lockdown. Only staff can send messages. **🔒\n**Time:** #{time} minute(s)")
         time_sec = time * 60
@@ -239,7 +239,7 @@ module SerieBot
         lockdown.can_send_messages = true
         everyone_role = Helper.role_from_name(event.server, '@everyone')
         event.channel.define_overwrite(everyone_role, lockdown, 0)
-        event.respond('🔓**Channel has been unlocked.**🔓')
+        event.respond(' 🔓**Channel has been unlocked.**🔓')
       end
     end
 

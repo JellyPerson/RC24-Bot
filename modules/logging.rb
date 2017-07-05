@@ -50,11 +50,9 @@ module SerieBot
     end
 
     def self.get_deleted_message(event, state)
-      if @messages[event.id].nil?
-        # Do nothing, as this message wasn't for the bot.
-        # This'd better be the case.
-        return nil
-      end
+      # Do nothing, as this message wasn't for the bot.
+      # This'd better be the case.
+      return nil if @messages[event.id].nil?
 
       message = @messages[event.id][:message]
       channel_name = @messages[event.id][:channel]
@@ -136,11 +134,7 @@ module SerieBot
           end
         end
         e = Discordrb::Webhooks::Embed.new
-        if user_info.nil?
-          e.title = 'A user left the server!'
-        else
-          e.title = 'A user was kicked from the server!'
-        end
+        user_info.nil? ? e.title = 'A user left the server!' : e.title = 'A user was kicked from the server!'
         description = "User: #{event.user.mention} | **#{event.user.distinct}**"
         unless user_info.nil?
           description += "\nKicked by #{event.bot.user(user_info[:doer]).name} with reason `#{user_info[:reason]}`"
@@ -152,14 +146,10 @@ module SerieBot
         e.footer = Discordrb::Webhooks::EmbedFooter.new(text: "Current UTC time: #{time.strftime('%H:%M')}")
 
         channel = get_server_log?(event)
-        unless channel.nil?
-          channel.send_embed('', e)
-        end
+        channel.send_embed('', e) unless channel.nil?
 
         channel = get_mod_log?(event)
-        unless channel.nil?
-          channel.send_embed('', e)
-        end
+        channel.send_embed('', e) unless channel.nil?
       end
     end
 
@@ -183,14 +173,10 @@ module SerieBot
       e.footer = Discordrb::Webhooks::EmbedFooter.new(text: "Current UTC time: #{time.strftime('%H:%M')}")
 
       channel = get_server_log?(event)
-      unless channel.nil?
-        channel.send_embed('', e)
-      end
+      channel.send_embed('', e) unless channel.nil?
 
       channel = get_mod_log?(event)
-      unless channel.nil?
-        channel.send_embed('', e)
-      end
+      channel.send_embed('', e) unless channel.nil?
     end
 
     user_unban do |event|
@@ -214,9 +200,7 @@ module SerieBot
 
     def self.record_action(type, doer, recipient, reason)
       rep_id = recipient.id
-      if self.recorded_actions[type.to_sym][rep_id].nil?
-        self.recorded_actions[type.to_sym][rep_id] = Array.new
-      end
+      self.recorded_actions[type.to_sym][rep_id] = Array.new if self.recorded_actions[type.to_sym][rep_id].nil?
       self.recorded_actions[type.to_sym][rep_id].push({
           'doer': doer.id,
           'reason': reason,
@@ -243,9 +227,7 @@ module SerieBot
             status_message.edit('Patching config...')
             bot_tmp = Dir.pwd + '/tmp/'
             downloaded_cfg_path = bot_tmp + event.user.id.to_s + '/nwc24msg.cfg'
-            if Config.debug
-              puts 'Path is ' + downloaded_cfg_path
-            end
+            puts 'Path is ' + downloaded_cfg_path if Config.debug
 
             error = MailParse.convert_mail(downloaded_cfg_path)
             puts "Potential error: #{error}"

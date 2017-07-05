@@ -30,9 +30,7 @@ module SerieBot
     # type can be channel, role, etc
     # short_name: mod, dev, srv, etc
     def self.save_xxx_id?(server_id, type, short_name, id)
-      if Config.debug
-        puts "Saving short type #{type} (type #{short_name}) with ID #{id} for server ID #{server_id}"
-      end
+      puts "Saving short type #{type} (type #{short_name}) with ID #{id} for server ID #{server_id}" if Config.debug
       # Potentially populate
       Config.settings[server_id] = {} if Config.settings[server_id].nil?
       Config.settings[server_id][type] = {} if Config.settings[server_id][type].nil?
@@ -100,35 +98,25 @@ module SerieBot
           end
           if status
             # They've got at least one of the roles
-            if Config.debug
-              puts "Looks like the user has #{role_type.to_s}"
-            end
+            puts "Looks like the user has #{role_type.to_s}" if Config.debug
             return status
           else
             # Continue, I guess
             next
           end
         else
-          if Config.debug
-            puts "I don't have the #{role_type.to_s} role in my list... perhaps you made a typo?"
-          end
+          puts "I don't have the #{role_type.to_s} role in my list... perhaps you made a typo?" if Config.debug
         end
       end
 
       # If we got here we couldn't find the role
-      if Config.debug
-        puts 'The user had none of the roles requested!'
-      end
+      puts 'The user had none of the roles requested!' if Config.debug
       return false
     end
 
     # We have to specify user here because we're checking if another user is verified
     def self.is_other_verified?(event, other_user = nil)
-      user = if other_user.nil?
-               event.user
-             else
-               other_user
-             end
+      user = other_user.nil? ? event.user : other_user
       return is_xxx_role?(event, 'vfd', 'Verified', true, user)
     end
 
@@ -155,9 +143,7 @@ module SerieBot
     end
 
     def self.load_all
-      if Config.morpher_enabled
-        Morpher.messages = self.load_xyz('morpher')
-      end
+      Morpher.messages = self.load_xyz('morpher') if Config.morpher_enabled
       Codes.codes = self.load_xyz('codes')
       Logging.recorded_actions = self.load_xyz('actions', {:ban => {}, :kick => {}, :warn => {}})
       Birthdays.dates = self.load_xyz('birthdays')
@@ -175,9 +161,7 @@ module SerieBot
       folder = 'data'
       settings_path = "#{folder}/settings.yml"
       FileUtils.mkdir(folder) unless File.exist?(folder)
-      unless File.exist?(settings_path)
-        puts "[ERROR] I wasn't able to find data/settings.yml! Please grab the example from the repo."
-      end
+      puts "[ERROR] I wasn't able to find data/settings.yml! Please grab the example from the repo." unless File.exist?(settings_path)
       Config.settings = YAML.load(File.read(settings_path))
     end
 
@@ -193,7 +177,6 @@ module SerieBot
       url = user.avatar_url
       uri = URI.parse(url)
       filename = File.basename(uri.path)
-
       filename = filename.start_with?('a_') ? filename.gsub('.jpg', '.gif') : filename.gsub('.jpg', '.png')
       url << '?size=256'
       url = "https://cdn.discordapp.com/avatars/#{user.id}/#{filename}?size=#{size}"
@@ -230,9 +213,7 @@ module SerieBot
         id = event.user.id
         event.bot.ignore_user(id)
         # Add to persistent list
-        unless Config.settings['ignored_bots'].include? id
-          Config.settings['ignored_bots'].push(id)
-        end
+        Config.settings['ignored_bots'].push(id) unless Config.settings['ignored_bots'].include? id
         Helper.save_xyz('settings', Config.settings)
         true
       else
@@ -304,11 +285,7 @@ module SerieBot
     # Dumps all messages in a given channel.
     # Returns the filepath of the file containing the dump.
     def self.dump_channel(channel, output_channel = nil, folder, timestamp)
-      server = if channel.private?
-             'DMs'
-           else
-             channel.server.name
-          end
+      server = channel.private? ? 'DMs' : channel.server.name
       message = "Dumping messages from channel \"#{channel.name.gsub('`', '\\`')}\" in #{server.gsub('`', '\\`')}, please wait...\n"
       output_channel.send_message(message) unless output_channel.nil?
       puts message
@@ -378,12 +355,8 @@ module SerieBot
       member = channel.server.member(user.id)
       unless member.nil?
         member.roles.sort_by(&:position).reverse.each do | role |
-          if role.color.combined == 0
-            next
-          end
-          if Config.debug
-            puts 'Using ' + role.name + '\'s color ' + role.color.combined.to_s
-          end
+          next if role.color.combined == 0
+          puts 'Using ' + role.name + '\'s color ' + role.color.combined.to_s if Config.debug
           color = role.color.combined
           break
         end
@@ -397,9 +370,7 @@ module SerieBot
        puts "Looking for #{channel_name}"
       end
       channel = channels.select { |x| x.name == channel_name }.first
-      if Config.debug
-        puts "Found #{channel.name} (ID: #{channel.id})"
-      end
+      puts "Found #{channel.name} (ID: #{channel.id})" if Config.debug
       return channel
     end
 
