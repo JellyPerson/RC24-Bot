@@ -22,37 +22,23 @@ module SerieBot
       return_message.edit("Pong! - #{ping}ms")
     end
 
-    command(:nsfw) do |event|
-      event.respond("⚠️ WARNING: Please don't post NSFW pictures or talk about anything NSFW-related.\nFailure to comply with this can result in a kick or ban.");
-    end
 
-    command(:phobic) do |event|
-      event.respond("⚠️ WARNING: Please don't be sexist, racist, anti-semitic or *phobic.\nFailure to comply with this can result in a kick or ban.")
-    end
+    warnings = {
+        nsfw: "Please don't post NSFW pictures or talk about anything NSFW-related.\nFailure to comply with this can result in a kick or ban.",
+        phobic: "Please don't be sexist, racist, anti-semitic or *phobic.\nFailure to comply with this can result in a kick or ban.",
+        dox: "Please don't dox people on this server.\nFailure to comply with this can result in a kick or ban.",
+        spam: "Please don't spam.\nFailure to comply with this can result in a kick or ban.",
+        random: "Please take your spam to #random. 🚮\nFailure to comply with this can result in a lockdown of this channel.",
+        copyright: "Please don't share downloads to any copyrighted content, specifically paid software of any sort, including ROMs, Wii WBFS files, WAD files, and other types of paid software. DM a user about it if you want to share those things. Also, don’t ask for WADs of non-homebrew Wii Channels.\nFailure to comply with this can result in a kick or ban.",
+        staff: "Please don't ask to be staff when we are not specifically looking for any, we probably won’t consider you if you do so. Feel free to ask if we’re open for staff, though.\nFailure to comply with this can result in a kick or ban.",
+        selfbot: "Please don't excessively use selfbots as it will spam up our logging methods. Using them sparingly or however you want in #trash is perfectly fine.\nFailure to comply with this can result in a kick or ban.",
+    }
 
-    command(:dox) do |event|
-      event.respond("⚠️ WARNING: Please don't dox people on this server.\nFailure to comply with this can result in a kick or ban.");
-    end
-
-    command(:spam) do |event|
-      event.respond("⚠️ WARNING: Please don't spam.\nFailure to comply with this can result in a kick or ban.");
-    end
-
-    command(:random) do |event|
-      event.respond("⚠️ WARNING: Please take your spam to #random. 🚮\nFailure to comply with this can result in a lockdown of this channel.");
-    end
-
-    command(:copyright) do |event|
-      event.respond("⚠️ WARNING: Please don't share downloads to any copyrighted content, specifically paid software of any sort, including ROMs, Wii WBFS files, WAD files, and other types of paid software. DM a user about it if you want to share those things. Also, don’t ask for WADs of non-homebrew Wii Channels.\nFailure to comply with this can result in a kick or ban.");
-    end
-
-    command(:staff) do |event|
-      event.respond("⚠️ WARNING: Please don't ask to be staff when we are not specifically looking for any, we probably won’t consider you if you do so. Feel free to ask if we’re open for staff, though.\nFailure to comply with this can result in a kick or ban.");
-    end
-
-    command(:selfbot) do |event|
-      event.respond("⚠️ WARNING: Please don't excessively use selfbots as it will spam up our logging methods. Using them sparingly or however you want in #trash is perfectly fine.\nFailure to comply with this can result in a kick or ban.");
-    end
+    warnings.each {|name, text|
+      command(name.to_sym) do |event|
+        event.respond("⚠ WARNING #{text}")
+      end
+    }
 
     command(:patch) do |event|
       begin
@@ -70,10 +56,10 @@ module SerieBot
         next
       end
 
-      unless event.message.mentions[0].nil?
-        user = event.message.mentions[0]
-      else
+      if event.message.mentions[0].nil?
         user = event.user
+      else
+        user = event.message.mentions[0]
       end
       if user.game.nil?
         playing = '[N/A]'
