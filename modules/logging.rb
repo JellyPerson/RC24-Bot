@@ -15,6 +15,8 @@ module SerieBot
 
     @messages = {}
 
+
+
     def self.get_message(event, state)
       if event.nil? || event.message.nil? || event.message.content.nil?
       # Why is this nil?
@@ -92,6 +94,13 @@ module SerieBot
         event.server.general_channel.send_message("❌ I couldn't find the mod log!")
       end
       id
+    end
+
+    def self.send_to_log(types, embed)
+      # Allow for creation of embed on spot
+      embed ||= Discordrb::Webhooks::Embed.new
+      yield(embed) if block_given?
+      types.each do
     end
 
     message do |event|

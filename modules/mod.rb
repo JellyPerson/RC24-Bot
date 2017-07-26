@@ -65,7 +65,7 @@ module SerieBot
       if event.message.mentions[0]
         final_message = kick_reason.drop(1)
         display = final_message.join(' ')
-        message = "You have been kicked from the server **#{event.server.name}** by #{event.message.author.mention} | **#{event.message.author.display_name}**\n" \
+        message = "You have been kicked from the server **#{event.server.name}** by #{event.user.mention} | **#{event.user.display_name}**\n" \
         "They gave the following reason: ``#{display}``"
         begin
           member.pm(message)
@@ -75,7 +75,7 @@ module SerieBot
         end
         begin
           # Register for logging
-          event.server.kick(member)
+          event.server.kick(member, "ran by #{event.user.display_name}; actual reason #{display}")
           Logging.record_action('kick', event.user, member, display)
         rescue Discordrb::Errors::NoPermission
           event.respond("❗❗❗ The bot doesn't have permission to kick!")
@@ -88,7 +88,7 @@ module SerieBot
       end
     end
 
-    command(:warn, description: 'Warn somebody on the server.', usage: "#{Config.prefix}warn @user reason", min_args: 2) do |event, *kick_reason|
+    command(:warn, description: 'Warn somebody on the server.', usage: "#{Config.prefix}warn @user reason", min_args: 2) do |event, *warn_reason|
       unless RoleHelper.named_role?(event, %i[adm dev mod hlp])
         event.respond("❌ You don't have permission for that!")
         break
@@ -102,7 +102,7 @@ module SerieBot
 
       break if event.channel.private?
       if event.message.mentions[0]
-        final_message = kick_reason.drop(1)
+        final_message = warn_reason.drop(1)
         display = final_message.join(' ')
         message = "You have been warned on the server **#{event.server.name}** by #{event.message.author.mention} | **#{event.message.author.display_name}**\n" \
         "They gave the following reason: ``#{display}``"
@@ -140,7 +140,7 @@ module SerieBot
       if event.message.mentions[0]
         final_ban_message = ban_reason.drop(1)
         ban_display = final_ban_message.join(' ')
-        message = "You have been **permanently banned** from the server #{event.server.name} by #{event.message.author.mention} | **#{event.message.author.display_name}**\n" \
+        message = "You have been **permanently banned** from the server #{event.server.name} by #{event.user.mention} | **#{event.user.display_name}**\n" \
         "They gave the following reason: ``#{ban_display}``\n\n" \
         "If you wish to appeal for your ban's removal, please contact this person, or the server owner."
         begin
@@ -150,7 +150,7 @@ module SerieBot
           break
         end
         begin
-          event.server.ban(member)
+          event.server.ban(member, 0, "ran by #{event.user.display_name}; actual #{ban_reason}")
           # Register for logging
           Logging.record_action('ban', event.user, member, ban_display)
           event.respond('👌 The ban hammer has hit, hard.')

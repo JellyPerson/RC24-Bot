@@ -4,12 +4,12 @@ module SerieBot
   # Role and config functions for the bot.
   module RoleHelper
     class << self
-      attr_accessor :types
+      attr_accessor :role_types
     end
 
     # Format:
     # [name, show_message]
-    @types = {
+    @role_types = {
       owner: ['Dummy Entry', true],
       dev: ['RiiConnect24 Developers', true],
       bot: ['Bot Helpers', false],
@@ -19,6 +19,8 @@ module SerieBot
       adm: ['Server Admins', false],
       trn: ['Translators', false]
     }
+    
+    
 
     # Gets the channel/role's ID based on the given parameters
     def self.get_xxx_id?(server_id, type, short_type)
@@ -108,7 +110,7 @@ module SerieBot
 
       # Only support listed types.
       roles.each do |role_type|
-        if @types.include? role_type
+        if @role_types.include? role_type
           if role_type.to_s == 'owner'
             status = Config.bot_owners.include?(user.id)
           else
@@ -118,7 +120,7 @@ module SerieBot
             rescue NoMethodError
               return false
             end
-            role_info = @types[role_type]
+            role_info = @role_types[role_type]
             status = xxx_role?(event, role_type.to_s, role_type[0], role_info[1], user)
           end
           next unless status
